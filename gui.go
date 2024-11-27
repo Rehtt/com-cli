@@ -30,6 +30,8 @@ func (a *App) initGui() (err error) {
 		NewStopBits(),
 		NewDataBits(),
 		NewParity(),
+		NewDisplayMode(),
+		NewInputMode(),
 	)
 
 	return
@@ -107,11 +109,11 @@ func (a *App) keybindings() error {
 	a.gui.SetKeybinding("error", gocui.KeyEnter, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
 		return a.cloasError()
 	})
-	a.gui.SetKeybinding("settings", gocui.KeyArrowUp, gocui.ModNone, selectUp)
-	a.gui.SetKeybinding("settings", gocui.KeyArrowDown, gocui.ModNone, selectDown)
+	a.gui.SetKeybinding("settings", gocui.KeyArrowUp, gocui.ModNone, upDown(-1))
+	a.gui.SetKeybinding("settings", gocui.KeyArrowDown, gocui.ModNone, upDown(1))
 	a.gui.SetKeybinding("settings", gocui.KeyEnter, gocui.ModNone, a.settingOptions)
-	a.gui.SetKeybinding("settingOptions", gocui.KeyArrowDown, gocui.ModNone, selectDown)
-	a.gui.SetKeybinding("settingOptions", gocui.KeyArrowUp, gocui.ModNone, selectUp)
+	a.gui.SetKeybinding("settingOptions", gocui.KeyArrowDown, gocui.ModNone, upDown(1))
+	a.gui.SetKeybinding("settingOptions", gocui.KeyArrowUp, gocui.ModNone, upDown(-1))
 	a.gui.SetKeybinding("settingOptions", gocui.KeyEnter, gocui.ModNone, a.settingOptionEnter)
 	a.gui.SetKeybinding("switch", gocui.KeyEnter, gocui.ModNone, a.switchEnter)
 	a.gui.SetKeybinding("input", gocui.KeyEnter, gocui.ModNone, a.inputEnter)
@@ -155,6 +157,8 @@ func (a *App) switchEnter(g *gocui.Gui, v *gocui.View) error {
 			a.ErrorMsg(err.Error())
 			return nil
 		}
+		a.port.SetDisplayMode(a.settingMap["display_mode"].Value().(int))
+		a.port.SetInputMode(a.settingMap["input_mode"].Value().(int))
 		go a.port.HandleRead(func(data []byte) {
 			g.Update(func(g *gocui.Gui) error {
 				a.displayView.Write(data)
@@ -250,7 +254,7 @@ func (a *App) settingOptions(g *gocui.Gui, v *gocui.View) error {
 		}
 
 		a.currentSettingOption = s
-		fmt.Fprintln(view, strings.Join(list, "\n"))
+		fmt.Fprint(view, strings.Join(list, "\n"))
 		_, err = g.SetCurrentView("settingOptions")
 
 		a.lastView = v
@@ -258,30 +262,30 @@ func (a *App) settingOptions(g *gocui.Gui, v *gocui.View) error {
 	return err
 }
 
-func selectUp(g *gocui.Gui, v *gocui.View) error {
-	if v != nil {
-		ox, oy := v.Origin()
-		cx, cy := v.Cursor()
-		if err := v.SetCursor(cx, cy-1); err != nil && oy > 0 {
-			if err := v.SetOrigin(ox, oy-1); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
-
-func selectDown(g *gocui.Gui, v *gocui.View) error {
-	if v != nil {
-		cx, cy := v.Cursor()
-		if err := v.SetCursor(cx, cy+1); err != nil {
+func upDown(d int) func(*gocui.Gui, *gocui.View) error {
+	return func(g *gocui.Gui, v *gocui.View) error {
+		if v != nil {
+			cx, cy := v.Cursor()
 			ox, oy := v.Origin()
-			if err := v.SetOrigin(ox, oy+1); err != nil {
-				return err
+			var err error
+			if cy+d+oy > -1 && cy+d+oy < v.LineLen() {
+				err = v.SetCursor(cx, cy+d)
 			}
+			if err != nil {
+				if oy+d+cy > -1 && oy+d+cy < v.LineLen() {
+					err = v.SetOrigin(ox, oy+d)
+				}
+			}
+			return err
+			// if err := v.SetCursor(cx, cy+d); err != nil {
+			// 	ox, oy := v.Origin()
+			// 	if err := v.SetOrigin(ox, oy+d); err != nil {
+			// 		return err
+			// 	}
+			// }
 		}
+		return nil
 	}
-	return nil
 }
 
 func (a *App) ErrorMsg(errStr string) error {
@@ -315,9 +319,11 @@ func (a *App) Refresh() {
 	a.gui.Update(func(g *gocui.Gui) error {
 		{
 			a.settingsView.Clear()
+			buf := make([]string, 0, len(a.settings))
 			for _, v := range a.settings {
-				fmt.Fprintf(a.settingsView, "%s: %s\n", v.Name(), v.Get())
+				buf = append(buf, fmt.Sprintf("%s: %s", v.Name(), v.Get()))
 			}
+			fmt.Fprint(a.settingsView, strings.Join(buf, "\n"))
 		}
 		{
 			a.switchView.Clear()

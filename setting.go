@@ -211,3 +211,93 @@ func (p *port) Set(s string) error {
 	*p = port(s)
 	return nil
 }
+
+type displayMode string
+
+func NewDisplayMode() *displayMode {
+	m := displayMode("RAW")
+	return &m
+}
+
+func (m *displayMode) Name() string {
+	return "显示模式"
+}
+
+func (m *displayMode) Key() string {
+	return "display_mode"
+}
+
+func (m *displayMode) Get() string {
+	return string(*m)
+}
+
+func (m *displayMode) Value() any {
+	switch *m {
+	case "HEX":
+		return HEX
+	case "RAW":
+		return RAW
+	}
+	return RAW
+}
+
+func (m *displayMode) Trigger() ([]string, bool, error) {
+	return []string{"HEX", "RAW"}, true, nil
+}
+
+func (m *displayMode) Set(s string) error {
+	switch s {
+	case "HEX":
+		*m = displayMode(s)
+	case "RAW":
+		*m = displayMode(s)
+	default:
+		*m = displayMode("RAW")
+	}
+	return nil
+}
+
+type inputMode string
+
+func NewInputMode() *inputMode {
+	m := inputMode("RAW")
+	return &m
+}
+
+func (m *inputMode) Name() string {
+	return "输入模式"
+}
+
+func (m *inputMode) Key() string {
+	return "input_mode"
+}
+
+func (m *inputMode) Get() string {
+	return string(*m)
+}
+
+func (m *inputMode) Value() any {
+	switch *m {
+	case "HEX":
+		return HEX
+	case "RAW":
+		return RAW
+	}
+	return RAW
+}
+
+func (m *inputMode) Trigger() ([]string, bool, error) {
+	return []string{"HEX", "RAW"}, true, nil
+}
+
+func (m *inputMode) Set(s string) error {
+	switch s {
+	case "HEX":
+		*m = inputMode(s)
+	case "RAW":
+		*m = inputMode(s)
+	default:
+		*m = inputMode("RAW")
+	}
+	return nil
+}

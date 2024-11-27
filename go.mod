@@ -3,7 +3,7 @@ module com-cli
 go 1.23.3
 
 require (
-	github.com/Rehtt/gocui v0.0.0-20241127061109-c2263fd3b1df
+	github.com/Rehtt/gocui v0.0.0-20241127083319-bfb20b9fcc27
 	go.bug.st/serial v1.6.2
 )
 

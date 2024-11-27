@@ -36,6 +36,14 @@ func (s *serialPort) IsRun() bool {
 	return s.isRun.Load()
 }
 
+func (s *serialPort) SetDisplayMode(m int) {
+	s.displayMode = m
+}
+
+func (s *serialPort) SetInputMode(m int) {
+	s.inputMode = m
+}
+
 func (s *serialPort) HandleRead(f func(data []byte)) {
 	tmp := make([]byte, 512)
 	for s.isRun.Load() {

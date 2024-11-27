@@ -1,11 +1,11 @@
-github.com/CaoYnag/gocui v0.5.2 h1:msJoTbl2EImVvjjGXyhtvIRMzNA0hoiOlAbdq+2SIsI=
-github.com/CaoYnag/gocui v0.5.2/go.mod h1:Eaa4/UVY18by6sCl5gtgq34/bg4Dyfr31uQXVUzythk=
+github.com/Rehtt/gocui v0.0.0-20241127061109-c2263fd3b1df h1:UNWt5w10hyHzUckngdeOH2Fp/ZAJjo52647nfpCyTPs=
+github.com/Rehtt/gocui v0.0.0-20241127061109-c2263fd3b1df/go.mod h1:kfIvz1S2hAr9o16ASeDAYmkv5Z7a5qc8EAqkwzx8yeU=
+github.com/Rehtt/gocui v0.0.0-20241127083319-bfb20b9fcc27 h1:6qbDXAzJsIdymG4686ImglC3crJoPIgrXfr664j4VzA=
+github.com/Rehtt/gocui v0.0.0-20241127083319-bfb20b9fcc27/go.mod h1:kfIvz1S2hAr9o16ASeDAYmkv5Z7a5qc8EAqkwzx8yeU=
 github.com/creack/goselect v0.1.2 h1:2DNy14+JPjRBgPzAd1thbQp4BSIihxcBf0IXhQXDRa0=
 github.com/creack/goselect v0.1.2/go.mod h1:a/NhLweNvqIYMuxcMOuWY516Cimucms3DglDzQP3hKY=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/jroimartin/gocui v0.5.0 h1:DCZc97zY9dMnHXJSJLLmx9VqiEnAj0yh0eTNpuEtG/4=
-github.com/jroimartin/gocui v0.5.0/go.mod h1:l7Hz8DoYoL6NoYnlnaX6XCNR62G7J5FfSW5jEogzaxE=
 github.com/mattn/go-runewidth v0.0.9 h1:Lm995f3rfxdpd6TSmuVCHVb/QhupuXlYr8sCI/QdE+0=
 github.com/mattn/go-runewidth v0.0.9/go.mod h1:H031xJmbD/WCDINGzjvQ9THkh0rPKHF+m2gUSrubnMI=
 github.com/nsf/termbox-go v1.1.1 h1:nksUPLCb73Q++DwbYUBEglYBRPZyoXJdrj5L+TkjyZY=
