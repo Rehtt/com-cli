@@ -1,4 +1,4 @@
-module com-cli
+module github.com/Rehtt/com-cli
 
 go 1.23.3
 
