@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"strings"
@@ -161,6 +162,7 @@ func (a *App) switchEnter(g *gocui.Gui, v *gocui.View) error {
 		a.port.SetInputMode(a.settingMap["input_mode"].Value().(int))
 		go a.port.HandleRead(func(data []byte) {
 			g.Update(func(g *gocui.Gui) error {
+				data = bytes.ReplaceAll(data, []byte("\r\n"), []byte("\n"))
 				a.displayView.Write(data)
 				return nil
 			})
@@ -216,16 +218,17 @@ func (a *App) settingOptionEnter(g *gocui.Gui, v *gocui.View) error {
 	if err = a.currentSettingOption.Set(list[i]); err != nil {
 		return err
 	}
-	g.Update(func(g *gocui.Gui) error {
-		a.Refresh()
-		return nil
-	})
+	a.Refresh()
 	g.DeleteView(v.Name())
 	g.SetCurrentView(a.lastView.Name())
 	return nil
 }
 
 func (a *App) settingOptions(g *gocui.Gui, v *gocui.View) error {
+	if a.port != nil && a.port.IsRun() {
+		a.ErrorMsg("运行中，请停止再进行设置")
+		return nil
+	}
 	maxX, maxY := g.Size()
 	_, y := v.Cursor()
 	s := a.settings[y]
@@ -317,6 +320,8 @@ func (a *App) cloasError() error {
 
 func (a *App) Refresh() {
 	a.gui.Update(func(g *gocui.Gui) error {
+		a.displayView.Title = fmt.Sprintf("Display-(%s)", a.settingMap["input_mode"].Get())
+		a.inputView.Title = fmt.Sprintf("Input-(%s)", a.settingMap["display_mode"].Get())
 		{
 			a.settingsView.Clear()
 			buf := make([]string, 0, len(a.settings))

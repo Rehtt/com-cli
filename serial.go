@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/hex"
+	"fmt"
 	"strings"
 	"sync/atomic"
 
+	rs "github.com/Rehtt/Kit/strings"
 	"go.bug.st/serial"
 )
 
@@ -53,8 +55,7 @@ func (s *serialPort) HandleRead(f func(data []byte)) {
 		}
 		switch s.displayMode {
 		case HEX:
-			dst := make([]byte, hex.EncodedLen(n))
-			hex.Encode(dst, tmp[:n])
+			f(rs.ToBytes(fmt.Sprintf("%02X ", tmp[:n])))
 		case RAW:
 			f(tmp[:n])
 		}
