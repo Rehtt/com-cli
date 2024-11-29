@@ -9,6 +9,7 @@ import (
 
 	rs "github.com/Rehtt/Kit/strings"
 	"github.com/Rehtt/gocui"
+	"github.com/mattn/go-runewidth"
 	"github.com/mgutz/ansi"
 	"go.bug.st/serial"
 )
@@ -242,9 +243,40 @@ func (a *App) settingOptions(g *gocui.Gui, v *gocui.View) error {
 		a.ErrorMsg(err.Error())
 		return nil
 	}
+
+	// 计算边长
+	var (
+		stringMaxLen int
+		xc, yc       int = maxX / 2, maxY / 2
+		xd, yd       int = maxX / 4, maxY / 4
+		x1, x2       int = xc - xd, xc + xd
+		y1, y2       int = yc - yd, yc + yd
+	)
+	for _, v := range list {
+		if l := runewidth.StringWidth(v); stringMaxLen < l {
+			stringMaxLen = l
+		}
+	}
+	if stringMaxLen < xd*2 {
+		xd = stringMaxLen / 2
+		x1, x2 = xc-xd, xc+xd
+		x2 += 1
+		if stringMaxLen%2 != 0 {
+			x1 -= 1
+		}
+	}
+	if listLen := len(list); listLen < yd*2 {
+		yd = listLen / 2
+		y1, y2 = yc-yd, yc+yd
+		y2 += 1
+		if listLen%2 != 0 {
+			y1 -= 1
+		}
+	}
+
 	if show {
 		// 选项窗口
-		view, err := g.SetView("settingOptions", maxX/2-(maxX/4), maxY/2-(maxY/4), maxX/2+(maxX/4), maxY/2+(maxY/4))
+		view, err := g.SetView("settingOptions", x1, y1, x2, y2)
 		if err != nil && err != gocui.ErrUnknownView {
 			return err
 		}
@@ -285,12 +317,6 @@ func upDown(d int) func(*gocui.Gui, *gocui.View) error {
 				}
 			}
 			return err
-			// if err := v.SetCursor(cx, cy+d); err != nil {
-			// 	ox, oy := v.Origin()
-			// 	if err := v.SetOrigin(ox, oy+d); err != nil {
-			// 		return err
-			// 	}
-			// }
 		}
 		return nil
 	}

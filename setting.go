@@ -156,8 +156,7 @@ func (b *baudRate) Get() string {
 }
 
 func (b *baudRate) Value() any {
-	baudRate, _ := strconv.Atoi(string(*b))
-	return baudRate
+	return int(*b)
 }
 
 func (b *baudRate) Trigger() ([]string, bool, error) {
