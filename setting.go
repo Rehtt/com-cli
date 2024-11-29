@@ -19,7 +19,7 @@ type settings interface {
 type patity string
 
 func NewParity() *patity {
-	p := patity(serial.NoParity)
+	p := patity("无校验")
 	return &p
 }
 
@@ -237,23 +237,18 @@ func (m *displayMode) Value() any {
 		return HEX
 	case "RAW":
 		return RAW
+	case "DUMP":
+		return DUMP
 	}
 	return RAW
 }
 
 func (m *displayMode) Trigger() ([]string, bool, error) {
-	return []string{"HEX", "RAW"}, true, nil
+	return []string{"HEX", "RAW", "DUMP"}, true, nil
 }
 
 func (m *displayMode) Set(s string) error {
-	switch s {
-	case "HEX":
-		*m = displayMode(s)
-	case "RAW":
-		*m = displayMode(s)
-	default:
-		*m = displayMode("RAW")
-	}
+	*m = displayMode(s)
 	return nil
 }
 
@@ -291,13 +286,6 @@ func (m *inputMode) Trigger() ([]string, bool, error) {
 }
 
 func (m *inputMode) Set(s string) error {
-	switch s {
-	case "HEX":
-		*m = inputMode(s)
-	case "RAW":
-		*m = inputMode(s)
-	default:
-		*m = inputMode("RAW")
-	}
+	*m = inputMode(s)
 	return nil
 }

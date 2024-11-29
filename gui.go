@@ -5,8 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
+	rs "github.com/Rehtt/Kit/strings"
 	"github.com/Rehtt/gocui"
+	"github.com/mgutz/ansi"
 	"go.bug.st/serial"
 )
 
@@ -163,6 +166,8 @@ func (a *App) switchEnter(g *gocui.Gui, v *gocui.View) error {
 		go a.port.HandleRead(func(data []byte) {
 			g.Update(func(g *gocui.Gui) error {
 				data = bytes.ReplaceAll(data, []byte("\r\n"), []byte("\n"))
+				timeNow := ansi.Color("\n"+time.Now().Format("2006-01-02 15:04:05")+":\n", "yellow")
+				a.displayView.Write(rs.ToBytes(timeNow))
 				a.displayView.Write(data)
 				return nil
 			})
@@ -320,8 +325,8 @@ func (a *App) cloasError() error {
 
 func (a *App) Refresh() {
 	a.gui.Update(func(g *gocui.Gui) error {
-		a.displayView.Title = fmt.Sprintf("Display-(%s)", a.settingMap["input_mode"].Get())
-		a.inputView.Title = fmt.Sprintf("Input-(%s)", a.settingMap["display_mode"].Get())
+		a.displayView.Title = fmt.Sprintf("Display-(%s)", a.settingMap["display_mode"].Get())
+		a.inputView.Title = fmt.Sprintf("Input-(%s)", a.settingMap["input_mode"].Get())
 		{
 			a.settingsView.Clear()
 			buf := make([]string, 0, len(a.settings))

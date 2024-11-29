@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/hex"
-	"fmt"
 	"strings"
 	"sync/atomic"
 
@@ -20,6 +19,7 @@ type serialPort struct {
 const (
 	HEX = iota
 	RAW
+	DUMP
 )
 
 func openSerial(portName string, mode *serial.Mode) (*serialPort, error) {
@@ -55,7 +55,11 @@ func (s *serialPort) HandleRead(f func(data []byte)) {
 		}
 		switch s.displayMode {
 		case HEX:
-			f(rs.ToBytes(fmt.Sprintf("%02X ", tmp[:n])))
+			dst := make([]byte, hex.EncodedLen(n))
+			hex.Encode(dst, tmp[:n])
+			f(dst)
+		case DUMP:
+			f(rs.ToBytes(hex.Dump(tmp[:n])))
 		case RAW:
 			f(tmp[:n])
 		}
